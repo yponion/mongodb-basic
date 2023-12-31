@@ -5,6 +5,7 @@ const {User} = require('./models/User')
 
 const users = [];
 
+
 const MONGO_URI = 'mongodb+srv://admin:SCYi7seef40LxasP@atlascluster.bg4tnps.mongodb.net/?retryWrites=true&w=majority'
 
 const server = async () => {
