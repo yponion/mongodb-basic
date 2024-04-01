@@ -5,7 +5,7 @@ const BlogSchema = new Schema(
         title: {type: String, required: true},
         content: {type: String, required: true},
         islive: {type: Boolean, required: true, default: false}, // true이면 고객들에게 노출, false이면 임시저장
-        user: {type: Types.ObjectId, required: true, ref: 'user'} // ref 관계
+        user: {{type: Types.ObjectId, required: true, ref: 'user'}} // ref 관계
     },
     {
         timestamp: true
