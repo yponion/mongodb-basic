@@ -1,6 +1,6 @@
 const {Router} = require('express');
 const userRouter = Router();
-const {User} = require('../models')
+const {User, Blog, Comment} = require('../models')
 const mongoose = require('mongoose');
 
 userRouter.post('/', async (req, res) => {
@@ -57,7 +57,16 @@ userRouter.put('/:userId', async (req, res) => {
         //위 코드와 같지만 이건 DB와 두번 통신함. 받아와서 수정해서 저장
         let user = await User.findById(userId);
         if (age) user.age = age;
-        if (name) user.name = name;
+        if (name) {
+            user.name = name
+            await Blog.updateMany({"user._id": userId}, {"user.name": name}) // 이 유저가 작성한 모든 블로그의 이름이 바뀜
+            await Blog.updateMany(
+                {},
+                {"comments.$[comment].userFullName": `${name.first} ${name.last}`},
+                {arrayFilters: [{"comment.user": userId}]}
+            )
+        }
+        
         await user.save();
 
         return res.send({user});
@@ -72,7 +81,15 @@ userRouter.delete('/:userId', async (req, res) => {
         const {userId} = req.params;
         if (!mongoose.isValidObjectId(userId)) return res.status(400).send({err: "invalid userId"})
         // const user = await User.deleteOne({_id: userId}) // 그냥 삭제
-        const user = await User.findOneAndDelete({_id: userId}) // 삭제하는 거 반환하고 삭제
+        // const user = await User.findOneAndDelete({_id: userId}) // 삭제하는 거 반환하고 삭제
+
+        const [user] = await Promise.all([ // 첫 번째가 user니까 디스트럭처링
+            User.findOneAndDelete({_id: userId}), // user 삭제
+            Blog.deleteMany({"user._id": userId}), // user가 작성한 블로그 삭제
+            Blog.updateMany({"comments.user": userId}, {$pull: {comments: {user: userId}}}), // user가 작성한 후기가 포함된 블로그에서 해당 후기 pull 해주기
+            Comment.deleteMany({user: userId}) // user가 작성한 후기 삭제
+        ])
+
         return res.send(user);
     } catch (err) {
         console.log(err);
