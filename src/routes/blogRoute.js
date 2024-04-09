@@ -20,7 +20,7 @@ blogRouter.post('/', async (req, res) => {
         if (!user) return res.status(400).send({err: "user dose not exist"}) // 검증
 
         let blog = new Blog({...req.body, user}) // user:userId 안해도 user에서 _id를 빼서 저장해줌
-        console.log(blog)
+        // console.log(blog)
         await blog.save(); // 몽구스를 {...req.body, user}를 그대로 저장하는게 아니라 적절하게 가공해서 저장함
         return res.send({blog})
 
@@ -33,11 +33,11 @@ blogRouter.post('/', async (req, res) => {
 blogRouter.get('/', async (req, res) => {
     try {
         const blogs = await Blog.find({})
-            // .limit(50)
-            .populate([
-                {path:"user"},
-                {path: "comments", populate:{path:"user"}}
-            ]);
+            .limit(200)
+        // .populate([
+        //     {path: "user"},
+        //     {path: "comments", populate: {path: "user"}}
+        // ]);
         return res.send({blogs});
     } catch (err) {
         console.log(err)
