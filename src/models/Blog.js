@@ -17,9 +17,12 @@ const BlogSchema = new Schema(
         comments: [CommentSchema],//CommentSchema를 export해서 그대로 사용. 위 user처럼 필요한 것만 사용 가능하고, 이처럼 바로 스키마를 넣어줘도 됨.
     },
     {
-        timestamp: true
+        timestamps: true
     }
 )
+
+BlogSchema.index({'user._id': 1, updatedAt: 1})
+BlogSchema.index({title: "text", content: "text"})
 
 // //가상의 키(?) 설정 (DB에는 저장되는게 아님) -> 가상키 말고 실제로 ㄱㄱ
 // BlogSchema.virtual("comments", {

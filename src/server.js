@@ -29,7 +29,13 @@ const server = async () => {
             //     await generateFakeData(10, 1, 10) // app.listen 이후에 이루어 져야함
             // }
 
-            // await generateFakeData(3, 5, 20)
+            // await generateFakeData(100000, 5, 20)
+
+            // console.time("insert time: ")
+            // await generateFakeData(10, 10, 10)
+            // console.timeEnd("insert time: ")
+
+
         })
     } catch (err) {
         console.log(err);

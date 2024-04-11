@@ -6,7 +6,7 @@ const UserSchema = new Schema({
         first: {type: String, require: true},
         last: {type: String, require: true}
     },
-    age: Number,
+    age: {type: Number, index: true},
     email: String
 }, {timestamps: true})
 
