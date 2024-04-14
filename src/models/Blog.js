@@ -15,6 +15,7 @@ const BlogSchema = new Schema(
             },
         }, // ref 관계
         comments: [CommentSchema],//CommentSchema를 export해서 그대로 사용. 위 user처럼 필요한 것만 사용 가능하고, 이처럼 바로 스키마를 넣어줘도 됨.
+        commentsCount: {type: Number, default: 0, required: true},
     },
     {
         timestamps: true

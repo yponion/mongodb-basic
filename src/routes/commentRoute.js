@@ -19,14 +19,28 @@ commentRouter.post('/', async (req, res) => {
             User.findById(userId),
             Blog.findById(blogId)
         ])
-        if (!user) return res.status(400).send({err: "user dose not exist"})
-        if (!blog) return res.status(400).send({err: "blog dose not exist"})
+        if (!user) return res.status(400).send({err: "user does not exist"})
+        if (!blog) return res.status(400).send({err: "blog does not exist"})
         if (!blog.islive) return res.status(400).send({err: "blog is not available"})
-        const comment = new Comment({content, user, userFullName: `${user.name.first} ${user.name.last}`, blog})
-        await Promise.all([ //blog도 아래에서 쓰고 싶으면 let[comment, blog]=await Promise.all([ 다음처럼 디스럭처링 하면 되는데 사용 안하니까 안함
+        const comment = new Comment({
+            content,
+            user,
+            userFullName: `${user.name.first} ${user.name.last}`,
+            blog: blogId,
+        })
+        // await Promise.all([ //blog도 아래에서 쓰고 싶으면 let[comment, blog]=await Promise.all([ 다음처럼 디스럭처링 하면 되는데 사용 안하니까 안함
+        //     comment.save(),
+        //     Blog.updateOne({_id: blogId}, {$push: {comments: comment}})
+        // ]);
+        blog.commentsCount++
+        blog.comments.push(comment)
+        if (blog.commentsCount > 3) blog.comments.shift()
+
+        await Promise.all([
             comment.save(),
-            Blog.updateOne({_id: blogId}, {$push: {comments: comment}})
-        ]);
+            blog.save(),
+            // Blog.updateOne({_id: blogId}, {$inc: {commentsCount: 1}}),
+        ])
         return res.send({comment})
     } catch (err) {
         console.log(err)
@@ -36,10 +50,12 @@ commentRouter.post('/', async (req, res) => {
 
 commentRouter.get('/', async (req, res) => {
     try {
+        let {page = 0} = req.query;
+        page = parseInt(page);
         const {blogId} = req.params;
         if (!isValidObjectId(blogId)) return res.status(400).send({err: "blogId is invalid"})
-
-        const comments = await Comment.find({blog: blogId});
+        console.log({page})
+        const comments = await Comment.find({blog: blogId}).sort({createdAt: -1}).skip(page * 3).limit(3)
         return res.send({comments});
     } catch (err) {
         console.log(err)

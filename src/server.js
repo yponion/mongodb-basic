@@ -32,7 +32,7 @@ const server = async () => {
             // await generateFakeData(100000, 5, 20)
 
             // console.time("insert time: ")
-            // await generateFakeData(10, 10, 10)
+            // await generateFakeData(10, 2, 10)
             // console.timeEnd("insert time: ")
 
 

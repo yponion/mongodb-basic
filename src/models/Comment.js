@@ -10,5 +10,7 @@ const CommentSchema = new Schema(
     {timestamp: true}
 )
 
+CommentSchema.index({blog: 1, createdAt: -1})
+
 const Comment = model("comment", CommentSchema); // 모델 컬렉션 이름은 끝에 s가 붙어서 생성됨
 module.exports = {Comment, CommentSchema}

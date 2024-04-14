@@ -1,6 +1,6 @@
 const {Router} = require('express');
 const blogRouter = Router();
-const {Blog, User} = require('../models')
+const {Blog, User, Comment} = require('../models')
 const {isValidObjectId} = require('mongoose')
 
 // const {commentRouter} = require('../routes') // 이건 왜 안되지?
@@ -17,7 +17,7 @@ blogRouter.post('/', async (req, res) => {
         if (islive && typeof islive !== 'boolean') return res.status(400).send({err: "islive must be a boolena"}) // islive 있다면 boolean인지 검증
         if (!isValidObjectId(userId)) return res.status(400).send({err: "userId is invalid"}) // userId가 ObjectId인지 검증
         let user = await User.findById(userId); // userId로 불러옴
-        if (!user) return res.status(400).send({err: "user dose not exist"}) // 검증
+        if (!user) return res.status(400).send({err: "user does not exist"}) // 검증
 
         let blog = new Blog({...req.body, user}) // user:userId 안해도 user에서 _id를 빼서 저장해줌
         // console.log(blog)
@@ -52,7 +52,9 @@ blogRouter.get('/:blogId', async (req, res) => {
         if (!isValidObjectId(blogId)) return res.status(400).send("blogId is invalid");
         // const blog = await Blog.findById(blogId);
         const blog = await Blog.findOne({_id: blogId});
-        return res.send({blog});
+        // const commentCount = await Comment.find({blog: blogId}).countDocuments();
+
+        return res.send({blog, commentCount});
     } catch (err) {
         console.log(err)
         res.status(500).send({err: err.message})
