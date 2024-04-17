@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./src/server",
+    "start": "env-cmd node ./src/server",
     "dev": "env-cmd nodemon --ignore client.js ./src/server.js"
   },
   "dependencies": {
