@@ -6,12 +6,14 @@ const {generateFakeData} = require('./faker2')
 
 //https://github.com/hoffnung8493/mongodb_tutorial
 
-const MONGO_URI = 'mongodb+srv://admin:to9BtoNjXJ1bxgj9@atlascluster.bg4tnps.mongodb.net/BlogService?retryWrites=true&w=majority'
 
 const port = 3000
 
 const server = async () => {
     try {
+        const {MONGO_URI} = process.env
+        if (!MONGO_URI) throw new Error("MONGO_URI is required!!!")
+
         await mongoose.connect(MONGO_URI);
         // mongoose.set('debug', true) // 디버그 찍어 볼 수 있음
         console.log('MongoDB Connected')
